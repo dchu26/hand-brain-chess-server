@@ -6,6 +6,7 @@ const port = process.env.PORT || 8000;
 const io = require('socket.io')(http);
 
 io.on("connection", socket => {
+  console.log(socket.handshake.address);
   let game = new Chess();
   socket.emit("position", game.fen());
   socket.on("move", move => {
