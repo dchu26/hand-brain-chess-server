@@ -7,6 +7,8 @@ module.exports = class Room {
     this.phase = "lobby";
     this.players = new Map();
     this.currentPlayer = 0;
+    this.lastMove = {};
+    this.gameState = "";
   }
 
   chooseRole(userId, role) {
@@ -16,6 +18,7 @@ module.exports = class Room {
     }
     this.players.delete(userId);
     this.players.set(userId, role);
+    console.log(this.players);
   }
 
   validatePlayers() {
@@ -24,6 +27,9 @@ module.exports = class Room {
       if (roles.add(value) === false) {
         return false;
       }
+    }
+    if (roles.size != 4) {
+      return false;
     }
     this.phase = "game";
     return true;

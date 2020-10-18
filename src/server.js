@@ -10,7 +10,7 @@ const rooms = new Map();
 
 io.on("connection", socket => {
   let room;
-  let userId = 'asdf';
+  let userId;
 
   socket.on("login", id => {
     if (id === null) {
@@ -38,7 +38,7 @@ io.on("connection", socket => {
 
   socket.on("chooseRole", role => {
     room.chooseRole(userId, role);
-    if (room.validatPlayers()) {
+    if (room.validatePlayers()) {
       io.to(room.id).emit("startedGame");
     }
     else {
@@ -48,15 +48,15 @@ io.on("connection", socket => {
 });
 
 function createId() {
-  return crypto.randomBytes(20).toString('hex');
+  return crypto.randomBytes(20).toString("hex");
 }
 
 function createRoom() {
-  let roomId = "/" + crypto.randomBytes(20).toString('hex');
+  let roomId = "/" + crypto.randomBytes(20).toString("hex");
   rooms.set(roomId, new Room(roomId));
   return roomId;
 }
 
 http.listen(port, () => {
-    console.log('listening on *: ' + port);
+    console.log("listening on *: " + port);
 });
