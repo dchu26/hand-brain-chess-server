@@ -24,11 +24,11 @@ module.exports = class Room {
     let roles  = new Set();
     for (let value of this.players.values()) {
       if (roles.add(value) === false) {
-        //return false;
+        return false;
       }
     }
     if (roles.size != 4) {
-      //return false;
+      return false;
     }
     this.phase = "game";
     return true;
