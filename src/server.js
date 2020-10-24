@@ -34,7 +34,7 @@ io.on("connection", socket => {
 
   socket.on("getLobby", () => {
     socket.emit("lobby", room.players);
-  })
+  });
 
   socket.on("chooseRole", role => {
     room.chooseRole(userId, role);
@@ -44,6 +44,14 @@ io.on("connection", socket => {
     else {
       io.to(room.id).emit("lobby", room.players);
     }
+  });
+
+  socket.on("getBoard", () => {
+    let position = room.game.fen();
+    let gameState = "";//room.gameState();
+    let squares = room.squares();
+    boardState = {position: position, squares: squares, gameState: gameState};
+    io.to(room.id).emit("board", boardState);
   });
 });
 
