@@ -48,7 +48,7 @@ module.exports = class Room {
     let player = this.lastMove.player;
     let move = this.lastMove.move;
     if (player === 0 || player === 2) {
-      let target = this.game.get(move.to);
+      let target = this.game.get(move.from);
       let piece = target.type;
       let color = target.color;
       for (let square of this.game.SQUARES) {
@@ -56,7 +56,7 @@ module.exports = class Room {
         if (boardSquare !== null && 
           boardSquare.type === piece &&
           boardSquare.color === color) {
-          squares.push(boardSquare);
+          squares.push(square);
         }
       }
     }
@@ -65,5 +65,37 @@ module.exports = class Room {
       squares.push(move.to);
     }
     return squares;
+  }
+
+  move(move, userId) {
+    if (!this.players.has(userId)) {
+      return false;
+    }
+
+    let role = this.players.get(userId);
+    if (role !== this.currentPlayer) {
+      return false;
+    }
+
+    let result = this.game.move(move);
+    if (result === null) {
+      return false;
+    }
+
+    if (role === 0 || role === 2) {
+      this.game.undo();
+    }
+
+    this.lastMove.player = role;
+    this.lastMove.move = move;
+    this.currentPlayer = (this.currentPlayer + 1) % 4;
+    return true;
+  }
+
+  boardState() {
+    let position = this.game.fen();
+    let gameState = "";//room.gameState();
+    let squares = this.squares();
+    return {position: position, squares: squares, gameState: gameState};
   }
 }

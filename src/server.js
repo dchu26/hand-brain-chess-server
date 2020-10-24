@@ -47,11 +47,13 @@ io.on("connection", socket => {
   });
 
   socket.on("getBoard", () => {
-    let position = room.game.fen();
-    let gameState = "";//room.gameState();
-    let squares = room.squares();
-    boardState = {position: position, squares: squares, gameState: gameState};
-    io.to(room.id).emit("board", boardState);
+    io.to(room.id).emit("board", room.boardState());
+  });
+
+  socket.on("move", move => {
+    if (room.move(move, userId)) {
+      io.to(room.id).emit("board", room.boardState());
+    }
   });
 });
 
