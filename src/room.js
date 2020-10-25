@@ -29,7 +29,6 @@ module.exports = class Room {
   }
 
   validatePlayers() {
-    return true;
     let roles  = new Set();
     for (let value of this.players.values()) {
       if (roles.add(value) === false) {
@@ -83,7 +82,6 @@ module.exports = class Room {
     }
 
     let role = this.players.get(userId);
-    role = this.currentPlayer;
     if (role !== this.currentPlayer) {
       return false;
     }
