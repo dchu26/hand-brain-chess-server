@@ -5,6 +5,7 @@ const http = require("http").Server(app);
 const port = process.env.PORT || 8000;
 const io = require("socket.io")(http);
 const crypto = require("crypto");
+const randomWords = require("random-words");
 
 const rooms = new Map();
 
@@ -17,7 +18,8 @@ io.on("connection", socket => {
       id = createId();
     }
     userId = id;
-    socket.emit("loggedIn", userId);
+    let name = randomWords() + " " + randomWords();
+    socket.emit("loggedIn", {userId: userId, name: name});
   });
 
   socket.on("createRoom", () => {
