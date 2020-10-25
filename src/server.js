@@ -57,6 +57,16 @@ io.on("connection", socket => {
       io.to(room.id).emit("board", room.boardState());
     }
   });
+
+  socket.on("resetGame", () => {
+    room.resetGame();
+    io.to(room.id).emit("board", room.boardState());
+  });
+
+  socket.on("resetLobby", () => {
+    room.resetLobby();
+    io.to(room.id).emit("joinedRoom", room.phase);
+  })
 });
 
 function createId() {

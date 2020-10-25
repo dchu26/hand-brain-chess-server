@@ -25,7 +25,6 @@ module.exports = class Room {
     for (let entry of this.players.entries()) {
       players.push(entry);
     }
-    console.log(players);
     return players;
   }
 
@@ -43,13 +42,13 @@ module.exports = class Room {
     return true;
   }
 
-  gameState() {
+  isOver() {
     if (this.game.in_stalemate() || 
       this.game.in_draw() || 
       this.game.in_checkmate()) {
-      return "ended";
+      return true;
     }
-    return "";
+    return false;
   }
 
   squares() {
@@ -65,7 +64,7 @@ module.exports = class Room {
         if (squarePiece !== null && 
           squarePiece.type === piece &&
           squarePiece.color === color &&
-          this.game.moves(square).length > 0) {
+          this.game.moves({square: square}).length > 0) {
           squares.push(square);
         }
       }
@@ -115,9 +114,21 @@ module.exports = class Room {
 
   boardState() {
     let position = this.game.fen();
-    let gameState = "";//room.gameState();
+    let isOver = this.isOver();
     let squares = this.squares();
     let player = (this.currentPlayer + 3) % 4;
-    return {position: position, squares: squares, player: player, gameState: gameState};
+    return {position: position, squares: squares, player: player, isOver: isOver};
+  }
+
+  resetGame() {
+    this.currentPlayer = 0;
+    this.lastMove = {player: -1, move: null};
+    this.game.reset();
+  }
+
+  resetLobby() {
+    this.resetGame();
+    this.phase = "lobby";
+    this.players = new Map();
   }
 }
