@@ -29,6 +29,7 @@ module.exports = class Room {
   }
 
   validatePlayers() {
+    return true;
     let roles  = new Set();
     for (let value of this.players.values()) {
       if (roles.add(value) === false) {
@@ -82,17 +83,18 @@ module.exports = class Room {
     }
 
     let role = this.players.get(userId);
+    role = this.currentPlayer;
     if (role !== this.currentPlayer) {
       return false;
     }
 
     if (role === 1 || role === 3) {
       let handPiece = this.game.get(move.from);
-      let brainPiece = this.game.get(this.lastMove.from);
+      let brainPiece = this.game.get(this.lastMove.move.from);
       if (handPiece === null) {
         return false;
       }
-      if (handPiece.type !== brainPiece.type && handPiece.color !== brainPiece.color) {
+      if (handPiece.type !== brainPiece.type || handPiece.color !== brainPiece.color) {
         return false;
       }
     }
