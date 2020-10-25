@@ -20,6 +20,15 @@ module.exports = class Room {
     this.players.set(userId, role);
   }
 
+  getPlayers() {
+    let players = [];
+    for (let entry of this.players.entries()) {
+      players.push(entry);
+    }
+    console.log(players);
+    return players;
+  }
+
   validatePlayers() {
     let roles  = new Set();
     for (let value of this.players.values()) {
