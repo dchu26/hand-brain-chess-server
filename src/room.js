@@ -52,10 +52,11 @@ module.exports = class Room {
       let piece = target.type;
       let color = target.color;
       for (let square of this.game.SQUARES) {
-        let boardSquare = this.game.get(square);
-        if (boardSquare !== null && 
-          boardSquare.type === piece &&
-          boardSquare.color === color) {
+        let squarePiece = this.game.get(square);
+        if (squarePiece !== null && 
+          squarePiece.type === piece &&
+          squarePiece.color === color &&
+          this.game.moves(square).length > 0) {
           squares.push(square);
         }
       }
@@ -77,6 +78,17 @@ module.exports = class Room {
       return false;
     }
 
+    if (role === 1 || role === 3) {
+      let handPiece = this.game.get(move.from);
+      let brainPiece = this.game.get(this.lastMove.from);
+      if (handPiece === null) {
+        return false;
+      }
+      if (handPiece.type !== brainPiece.type && handPiece.color !== brainPiece.color) {
+        return false;
+      }
+    }
+
     let result = this.game.move(move);
     if (result === null) {
       return false;
@@ -96,6 +108,7 @@ module.exports = class Room {
     let position = this.game.fen();
     let gameState = "";//room.gameState();
     let squares = this.squares();
-    return {position: position, squares: squares, gameState: gameState};
+    let player = (this.currentPlayer + 3) % 4;
+    return {position: position, squares: squares, player: player, gameState: gameState};
   }
 }
