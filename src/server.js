@@ -66,7 +66,11 @@ io.on("connection", socket => {
   socket.on("resetLobby", () => {
     room.resetLobby();
     io.to(room.id).emit("joinedRoom", room.phase);
-  })
+  });
+
+  socket.on("getOptions", square => {
+    socket.emit("options", room.getOptions(square));
+  });
 });
 
 function createId() {

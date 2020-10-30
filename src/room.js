@@ -29,6 +29,8 @@ module.exports = class Room {
   }
 
   validatePlayers() {
+    //this.phase = "game";
+    //return true;
     let roles  = new Set();
     for (let value of this.players.values()) {
       if (roles.add(value) === false) {
@@ -82,6 +84,7 @@ module.exports = class Room {
     }
 
     let role = this.players.get(userId);
+    //role = this.currentPlayer;
     if (role !== this.currentPlayer) {
       return false;
     }
@@ -112,18 +115,48 @@ module.exports = class Room {
     return true;
   }
 
+  getCheckSquare() {
+    if (!this.game.in_check()) {
+      return "";
+    }
+    let side = this.game.turn();
+    for (let square of this.game.SQUARES) {
+      let piece = this.game.get(square);
+      if (piece !== null && 
+        piece.type === this.game.KING &&
+        piece.color === side) {
+        return square;
+      }
+    }
+    return "";
+  }
+
+  getOptions(square) {
+    return this.game.moves({square: square, verbose: true});
+  }
+
   boardState() {
     let position = this.game.fen();
     let isOver = this.isOver();
+    //let isOver = true;
     let squares = this.squares();
-    let player = (this.currentPlayer + 3) % 4;
-    return {position: position, squares: squares, player: player, isOver: isOver};
+    let player = this.currentPlayer;
+    let players = this.getPlayers();
+    let checkSquare = this.getCheckSquare();
+    return {
+      position: position, 
+      squares: squares, 
+      player: player, 
+      isOver: isOver, 
+      players: players,
+      checkSquare: checkSquare
+    };
   }
 
   resetGame() {
     this.currentPlayer = 0;
     this.lastMove = {player: -1, move: null};
-    this.game.reset();
+    this.game = new Chess();
   }
 
   resetLobby() {
