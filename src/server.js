@@ -5,6 +5,7 @@ const http = require("http").Server(app);
 const port = process.env.PORT || 8000;
 const io = require("socket.io")(http);
 const crypto = require("crypto");
+const randomWords = require("random-words");
 
 const rooms = new Map();
 
@@ -17,7 +18,8 @@ io.on("connection", socket => {
       id = createId();
     }
     userId = id;
-    socket.emit("loggedIn", userId);
+    let name = randomWords() + " " + randomWords();
+    socket.emit("loggedIn", {userId: userId, name: name});
   });
 
   socket.on("createRoom", () => {
@@ -33,7 +35,7 @@ io.on("connection", socket => {
   });
 
   socket.on("getLobby", () => {
-    socket.emit("lobby", room.players);
+    socket.emit("lobby", room.getPlayers());
   });
 
   socket.on("chooseRole", role => {
@@ -42,7 +44,7 @@ io.on("connection", socket => {
       io.to(room.id).emit("startedGame");
     }
     else {
-      io.to(room.id).emit("lobby", room.players);
+      io.to(room.id).emit("lobby", room.getPlayers());
     }
   });
 
@@ -54,6 +56,20 @@ io.on("connection", socket => {
     if (room.move(move, userId)) {
       io.to(room.id).emit("board", room.boardState());
     }
+  });
+
+  socket.on("resetGame", () => {
+    room.resetGame();
+    io.to(room.id).emit("board", room.boardState());
+  });
+
+  socket.on("resetLobby", () => {
+    room.resetLobby();
+    io.to(room.id).emit("joinedRoom", room.phase);
+  });
+
+  socket.on("getOptions", square => {
+    socket.emit("options", room.getOptions(square));
   });
 });
 
