@@ -69,7 +69,9 @@ io.on("connection", socket => {
   });
 
   socket.on("getOptions", square => {
-    socket.emit("options", room.getOptions(square));
+    if(room.getOptions(square,userId)){
+    socket.emit("options", room.getOptions(square,userId));
+    }
   });
 });
 

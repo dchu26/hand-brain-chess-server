@@ -131,7 +131,16 @@ module.exports = class Room {
     return "";
   }
 
-  getOptions(square) {
+  getOptions(square,userId) {
+    if (!this.players.has(userId)) {
+      return false;
+    }
+
+    let role = this.players.get(userId);
+    //role = this.currentPlayer;
+    if (role !== this.currentPlayer) {
+      return false;
+    }
     return this.game.moves({square: square, verbose: true});
   }
 
